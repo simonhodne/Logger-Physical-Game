@@ -9,7 +9,7 @@ namespace Logger
         static void Main(string[] args)
         {
 
-            using (SerialPort port = new SerialPort("COM3", 921600))
+            using (SerialPort port = new SerialPort("COM5", 921600))
             {
                 
                 port.Open();
@@ -20,20 +20,16 @@ namespace Logger
                         if (port.BytesToRead > 0)
                         {
                             string logEntry = port.ReadLine();
-                            if (logEntry == "[START]: ")
+                            if(logEntry.Contains("[START]"))
                             {
-                                writer.WriteLine(logEntry + DateTime.Now);
+                                writer.WriteLine(logEntry + DateTime.Now.ToString());
                             }
                             else
                             {
                                 writer.WriteLine(logEntry);
                             }
-                            writer.Flush();
                             
-                            if(logEntry == "[END]")
-                            {
-                                writer.WriteLine();
-                            }
+                            writer.Flush();
                         }
                     }
                 }   
