@@ -4,6 +4,7 @@ namespace Logger
 {
     public class Program
     {
+        static string path = Environment.CurrentDirectory;
 
         static void Main(string[] args)
         {
@@ -12,30 +13,30 @@ namespace Logger
             {
                 
                 port.Open();
-
-                while (true)
+                using (StreamWriter writer = new(path + "\\Logfile.txt", append: true))
                 {
-                    if(port.BytesToRead > 0)
+                    while (true)
                     {
-                        using (StreamWriter writer = new(DateTime.Now.ToString() + ".txt", append: true))
+                        if (port.BytesToRead > 0)
                         {
-                            while (true)
+                            string logEntry = port.ReadLine();
+                            if (logEntry == "[START]: ")
                             {
-                                if (port.BytesToRead > 0)
-                                {
-                                    string logEntry = port.ReadLine();
-                                    writer.WriteLine(logEntry);
-                                    writer.Flush();
-                                    if(logEntry == "[END]")
-                                    {
-                                        break;
-                                    }
-                                }
+                                writer.WriteLine(logEntry + DateTime.Now);
+                            }
+                            else
+                            {
+                                writer.WriteLine(logEntry);
+                            }
+                            writer.Flush();
+                            
+                            if(logEntry == "[END]")
+                            {
+                                writer.WriteLine();
                             }
                         }
                     }
-                    
-                }
+                }   
             }
         }
     }
